@@ -1,0 +1,84 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 60px;
+  box-shadow: 0px 0px 5px;
+  border-radius: 3px;
+  background-color: rgb(244, 245, 246);
+
+  .header-left {
+    width: 30%;
+    text-align: start;
+
+    .text {
+      text-decoration: none;
+      color: rgb(68, 68, 68);
+      font-weight: 600;
+      font-size: 1.2rem;
+      font-family: Comic Sans, Comic Sans MS, cursive;
+    }
+  }
+
+  .header-center {
+    width: 30%;
+    text-align: center;
+    display: flex;
+    justify-content: center !important;
+    align-items: center !important;
+
+    .form-search {
+      width: 100%;
+
+      .form-search-input {
+        border: 0.5px rgb(199, 199, 199) solid;
+        border-right: none;
+        width: 80%;
+        height: 40px;
+        border-bottom-left-radius: 10px;
+        border-top-left-radius: 10px;
+        padding-left: 10px;
+        outline: none;
+      }
+
+      .btn-search {
+        border: 0.5px rgb(199, 199, 199) solid;
+        border-left: none;
+        outline: none;
+        background-color: white;
+        height: 40px;
+        width: 15%;
+        border-bottom-right-radius: 10px;
+        border-top-right-radius: 10px;
+        text-align: center;
+      }
+    }
+  }
+
+  .header-right {
+    width: 30%;
+
+    .list-itmes {
+      display: flex;
+      list-style: none;
+      align-items: center;
+      justify-content: end;
+      margin: auto;
+
+      .link-home,
+      .link-about,
+      .link-sign-in {
+        text-decoration: none;
+        color: black;
+      }
+
+      @media (max-width: 560px) {
+        .link-home,
+        .link-about {
+          display: none;
+        }
+      }
+    }
+  }
+}
