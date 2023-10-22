@@ -53,6 +53,14 @@
         border-top-right-radius: 10px;
         text-align: center;
       }
+      @media (max-width: 650px) {
+        .form-search-input {
+          width: 70%;
+        }
+        .btn-search {
+          width: 20%;
+        }
+      }
     }
   }
 
@@ -73,12 +81,18 @@
         color: black;
       }
 
-      @media (max-width: 560px) {
+      @media (max-width: 650px) {
         .link-home,
         .link-about {
           display: none;
         }
       }
+    }
+  }
+
+  @media (max-width: 650px) {
+    .header-right {
+      width: 20%;
     }
   }
 }

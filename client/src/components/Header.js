@@ -20,7 +20,7 @@ const Header = () => {
             placeholder="Search..."
           />
           <button type="button" className="btn-search">
-            <BiSearch size={20} />
+            <BiSearch size={20} className="me-3" />
           </button>
         </form>
       </div>
