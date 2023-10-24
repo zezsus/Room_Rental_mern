@@ -1,4 +1,5 @@
 const User = require("../models/UserModel");
+const jwt = require("jsonwebtoken");
 
 //[POST] api/auth/signup
 //public
@@ -29,9 +30,15 @@ const signup = async (req, res) => {
           const newUser = new User({ username, email, password });
           await newUser.save();
 
+          const accessToken = jwt.sign(
+            { userId: newUser._id },
+            process.env.ACCESS_TOKEN
+          );
+
           res.status(201).json({
             success: true,
             message: "user create successfully!",
+            accessToken,
           });
         }
       }
@@ -47,6 +54,39 @@ const signup = async (req, res) => {
 //[POST] api/auth/signin
 //public
 //login
-const signin = async (req, res) => {};
+const signin = async (req, res) => {
+  const { username, password } = req.body;
+  if (!username || !password) {
+    res.status(401).json({
+      success: false,
+      message: "missing username or email or password!",
+    });
+  } else {
+    try {
+      const user = await User.findOne({ username, password });
+      if (!user) {
+        res.status(401).json({
+          success: false,
+          message: "username or password incorrect",
+        });
+      } else {
+        const accessToken = jwt.sign(
+          { userId: user._id },
+          process.env.ACCESS_TOKEN
+        );
+        res.json({
+          success: true,
+          message: "login successfully",
+          accessToken,
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "server error",
+      });
+    }
+  }
+};
 
 module.exports = { signup, signin };
