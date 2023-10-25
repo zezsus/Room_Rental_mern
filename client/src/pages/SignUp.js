@@ -1,11 +1,10 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import "../assets/styles/SignUp.scss";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
+import axios from "axios";
+import { LOCAL_STORAGE_TOKEN_NAME, apiUrl } from "../util/api";
 
 const SignUp = () => {
-  const { signupUser } = useContext(AuthContext);
-
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -25,18 +24,24 @@ const SignUp = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     try {
-      const signupData = await signupUser(formData);
-      if (!signupData.success) {
-        setAlert({ type: "danger", message: signupData.message });
-        setTimeout(() => setAlert(""), 3000);
-      } else {
-        setAlert({ type: "success", message: signupData.message });
-        setTimeout(() => setAlert(""), 3000);
-
-        setFormData({ username: "", email: "", password: "" });
+      const res = await axios.post(`${apiUrl}/auth/signup`, formData);
+      if (res.data.success) {
+        localStorage.setItem(LOCAL_STORAGE_TOKEN_NAME, res.data.accessToken);
+        navigate("/sign-in");
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.data) {
+        setAlert({
+          type: "danger",
+          message: error.response.data.message,
+        });
+        setTimeout(() => setAlert(null), 3000);
+      } else {
+        setAlert({
+          type: "danger",
+          message: error.message,
+        });
+      }
     }
   };
 
@@ -44,7 +49,7 @@ const SignUp = () => {
     <div className="signup">
       <h1 className="title">Sign Up</h1>
       {alert ? (
-        <div className={"alert alert-" + alert.type} role="alert">
+        <div className="alert alert-danger" role="alert">
           {alert.message}
         </div>
       ) : null}

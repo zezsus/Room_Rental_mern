@@ -55,19 +55,19 @@ const signup = async (req, res) => {
 //public
 //login
 const signin = async (req, res) => {
-  const { username, password } = req.body;
-  if (!username || !password) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     res.status(401).json({
       success: false,
-      message: "missing username or email or password!",
+      message: "missing email or password!",
     });
   } else {
     try {
-      const user = await User.findOne({ username, password });
+      const user = await User.findOne({ email, password });
       if (!user) {
         res.status(401).json({
           success: false,
-          message: "username or password incorrect",
+          message: "email or password incorrect",
         });
       } else {
         const accessToken = jwt.sign(

@@ -1,17 +1,15 @@
-import React, { useContext, useState } from "react";
+import axios from "axios";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { AuthContext } from "../context/authContext";
+import { LOCAL_STORAGE_TOKEN_NAME, apiUrl } from "../util/api";
 
 const SignIn = () => {
-  const { signinUser } = useContext(AuthContext);
-
   const [formData, setFormData] = useState({
-    username: "",
     email: "",
     password: "",
   });
 
-  const { username, password } = formData;
+  const { email, password } = formData;
   const [alert, setAlert] = useState(null);
 
   const navigate = useNavigate();
@@ -23,18 +21,24 @@ const SignIn = () => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const signinData = await signinUser(formData);
-      if (!signinData.success) {
-        setAlert({
-          type: "danger",
-          message: signinData.message,
-        });
-        setTimeout(() => setAlert(""), 3000);
-      } else {
+      const res = await axios.post(`${apiUrl}/auth/signin`, formData);
+      if (res.data.success) {
+        localStorage.setItem(LOCAL_STORAGE_TOKEN_NAME, res.data.accessToken);
         navigate("/");
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.data) {
+        setAlert({
+          type: "danger",
+          message: error.response.data.message,
+        });
+        setTimeout(() => setAlert(null), 3000);
+      } else {
+        setAlert({
+          type: "danger",
+          message: error.message,
+        });
+      }
     }
   };
 
@@ -42,18 +46,18 @@ const SignIn = () => {
     <div className="signup">
       <h1 className="title">Sign In</h1>
       {alert ? (
-        <div className={"alert alert-" + alert.type} role="alert">
+        <div className="alert alert-danger" role="alert">
           {alert.message}
         </div>
       ) : null}
 
       <form className="form-signup">
         <input
-          type="text"
-          placeholder="username or email"
-          name="username"
-          className="username"
-          value={username}
+          type="email"
+          placeholder="email"
+          name="email"
+          className="email"
+          value={email}
           onChange={handleChange}
         />
         <input
