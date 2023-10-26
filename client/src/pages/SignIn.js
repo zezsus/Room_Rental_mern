@@ -1,17 +1,15 @@
-import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LOCAL_STORAGE_TOKEN_NAME, apiUrl } from "../util/api";
+import { UserContext } from "../context/userContext";
 
 const SignIn = () => {
+  const { signInUser } = useContext(UserContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
-
   const { email, password } = formData;
   const [alert, setAlert] = useState(null);
-
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -20,25 +18,20 @@ const SignIn = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    try {
-      const res = await axios.post(`${apiUrl}/auth/signin`, formData);
-      if (res.data.success) {
-        localStorage.setItem(LOCAL_STORAGE_TOKEN_NAME, res.data.accessToken);
-        navigate("/");
-      }
-    } catch (error) {
-      if (error.response.data) {
-        setAlert({
-          type: "danger",
-          message: error.response.data.message,
-        });
-        setTimeout(() => setAlert(null), 3000);
-      } else {
-        setAlert({
-          type: "danger",
-          message: error.message,
-        });
-      }
+    const signInData = await signInUser(formData);
+    if (!signInData.success) {
+      setAlert({ type: "danger", message: signInData.message });
+      setTimeout(() => setAlert(""), 3000);
+    } else {
+      setAlert({ type: "success", message: signInData.message });
+      setTimeout(() => setAlert(""), 3000);
+
+      navigate("/");
+
+      setFormData({
+        email: "",
+        password: "",
+      });
     }
   };
 
@@ -46,7 +39,7 @@ const SignIn = () => {
     <div className="signup">
       <h1 className="title">Sign In</h1>
       {alert ? (
-        <div className="alert alert-danger" role="alert">
+        <div className={"alert alert-" + alert.type} role="alert">
           {alert.message}
         </div>
       ) : null}
